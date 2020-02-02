@@ -1,6 +1,6 @@
 from pathlib import Path
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from MetaPhoto.MetaPhoto import MetaPhoto, MetaPicture
 
@@ -30,5 +30,7 @@ class TestMetaPhoto(TestCase):
         meta = MetaPhoto("../samples/")
         meta.date_format_file_name = "%Y%m%d-%H%M"
         original_date_as_str = "2008:11:22 19:29:04"
-        formatted_date = meta._format_date(original_date_as_str)
+        mock_pic = MagicMock()
+        mock_pic.get_date.return_value = original_date_as_str
+        formatted_date = meta._get_formatted_date_for_file_name(mock_pic)
         self.assertEqual("20081122-1929", formatted_date, "Format the date")

@@ -35,13 +35,11 @@ class MetaPhoto:
         date = datetime.strptime(date_string, self.exif_date_format)
         return date
 
-    def _format_date(self, date_string: str) -> str:
-        date = self._get_date_object(date_string)
-
     def _get_formatted_date_for_file_name(self, picture):
         # Get data and format
-        date = picture.get_date()
-        formatted_date = self._format_date(date)
+        date_string = picture.get_date()
+        date = self._get_date_object(date_string)
+        formatted_date = date.strftime(self.date_format_file_name)
         return formatted_date
 
         return date.strftime(self.date_format_file_name)
