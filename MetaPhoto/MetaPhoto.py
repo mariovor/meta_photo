@@ -17,7 +17,9 @@ class MetaPhoto:
         self.input_folder = input_folder
         self.raw_pictures = []
         self.meta_pictures = []
-        self.date_format = "%Y%m%d-%H%M"
+        self.date_format_file_name = "%Y%m%d-%H%M"
+        self.date_format_folder = "%Y"
+        self.exif_date_format = "%Y:%m:%d %H:%M:%S"
 
     def _read_dir(self):
         """ Read all files from the input directory """
@@ -29,25 +31,43 @@ class MetaPhoto:
         """ Convert the found files to objects handling exif information """
         self.meta_pictures = [MetaPicture(image) for image in self.raw_pictures]
 
+    def _get_date_object(self, date_string):
+        date = datetime.strptime(date_string, self.exif_date_format)
+        return date
+
     def _format_date(self, date_string: str) -> str:
-        date = datetime.strptime(date_string, "%Y:%m:%d %H:%M:%S")
+        date = self._get_date_object(date_string)
 
-        return date.strftime(self.date_format)
-
-    def _move_picture(self, picture: 'MetaPicture', target_directory: Path):
-        """ Move a given MetaPicture to a new directory. Rename it based on it's date """
-        new_file_name = self._build_new_file_name(picture)
-        target_path = join(target_directory, new_file_name)
-        move(picture.picture_path, target_path)
-
-    def _build_new_file_name(self, picture):
-        file_name = picture.picture_path.name
+    def _get_formatted_date_for_file_name(self, picture):
         # Get data and format
         date = picture.get_date()
         formatted_date = self._format_date(date)
+        return formatted_date
+
+        return date.strftime(self.date_format_file_name)
+
+    def _build_new_file_name(self, picture):
+        file_name = picture.picture_path.name
+        formatted_date = self._get_formatted_date_for_file_name(picture)
         # Build new file name
         new_file_name = f"{formatted_date}_{file_name}"
         return new_file_name
+
+    def _build_new_folder_name(self, picture):
+        date = self._get_date_object(picture.get_date())
+
+        return date.strftime(self.date_format_folder)
+
+    def _build_target_path(self, picture, target_directory):
+        new_file_name = self._build_new_file_name(picture)
+        new_folder_name = self._build_new_folder_name(picture)
+        target_path = join(target_directory, new_folder_name, new_file_name)
+        return target_path
+
+    def _move_picture(self, picture: 'MetaPicture', target_directory: Path):
+        """ Move a given MetaPicture to a new directory. Rename it based on it's date """
+        target_path = self._build_target_path(picture, target_directory)
+        move(picture.picture_path, target_path)
 
 
 class MetaPicture:
