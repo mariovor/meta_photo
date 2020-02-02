@@ -1,3 +1,4 @@
+from datetime import datetime
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
@@ -16,6 +17,7 @@ class MetaPhoto:
         self.input_folder = input_folder
         self.raw_pictures = []
         self.meta_pictures = []
+        self.date_format = "%Y%m%d-%H%M"
 
     def _read_dir(self):
         """ Read all files from the input directory """
@@ -27,15 +29,25 @@ class MetaPhoto:
         """ Convert the found files to objects handling exif information """
         self.meta_pictures = [MetaPicture(image) for image in self.raw_pictures]
 
-    @staticmethod
-    def _move_picture(picture: 'MetaPicture', target_directory: Path):
+    def _format_date(self, date_string: str) -> str:
+        date = datetime.strptime(date_string, "%Y:%m:%d %H:%M:%S")
+
+        return date.strftime(self.date_format)
+
+    def _move_picture(self, picture: 'MetaPicture', target_directory: Path):
         """ Move a given MetaPicture to a new directory. Rename it based on it's date """
-        file_name = picture.picture_path.name
-        # todo Use a method which handles the date format and is not private
-        date = picture._get_date()
-        new_file_name = f"{date}_{file_name}"
+        new_file_name = self._build_new_file_name(picture)
         target_path = join(target_directory, new_file_name)
         move(picture.picture_path, target_path)
+
+    def _build_new_file_name(self, picture):
+        file_name = picture.picture_path.name
+        # Get data and format
+        date = picture.get_date()
+        formatted_date = self._format_date(date)
+        # Build new file name
+        new_file_name = f"{formatted_date}_{file_name}"
+        return new_file_name
 
 
 class MetaPicture:
@@ -50,7 +62,7 @@ class MetaPicture:
         with open(self.picture_path, 'rb') as file:
             self.image = Image(file)
 
-    def _get_date(self):
+    def get_date(self):
         if hasattr(self.image, "datetime_original"):
             date = str(self.image.datetime_original)
         else:
