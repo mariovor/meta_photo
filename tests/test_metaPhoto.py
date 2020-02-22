@@ -27,6 +27,14 @@ class TestMetaPhoto(TestCase):
         mock_copy.assert_called_once_with(Path("../samples/astro.jpg"),
                                           "/test/folder/2008_TAG/20081122-1929_TAG_astro.jpg")
 
+    @patch("MetaPhoto.MetaPhoto.copy2")
+    def test_copy_picture(self, mock_copy):
+        meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
+        meta.copy()
+        mock_copy.assert_called_once()
+        mock_copy.assert_called_once_with(Path("../samples/astro.jpg"),
+                                          "/test/folder/2008_TAG/20081122-1929_TAG_astro.jpg")
+
     def test_format_data(self):
         meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
         meta.date_format_file_name = "%Y%m%d-%H%M"

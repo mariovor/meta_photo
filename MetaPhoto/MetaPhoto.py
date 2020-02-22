@@ -70,6 +70,12 @@ class MetaPhoto:
         target_path = self._build_target_path(picture)
         copy2(picture.picture_path, target_path)
 
+    def copy(self):
+        self._read_dir()
+        self._read_meta()
+        for picture in self.meta_pictures:
+            self._copy_picture(picture)
+
 
 class MetaPicture:
     """ Proxy for the exif.Image class"""
