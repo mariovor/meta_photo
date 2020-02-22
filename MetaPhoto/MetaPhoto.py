@@ -79,7 +79,6 @@ class MetaPhoto:
     def _copy_picture(self, picture: 'MetaPicture'):
         """ Move a given MetaPicture to a new directory. Rename it based on it's date and tag """
         self._build_and_create_target_path(picture)
-        print(f"Copy file {picture.picture_path} to {self.target_path}")
         copy2(picture.picture_path, self.target_path)
 
     def copy(self):
@@ -87,7 +86,10 @@ class MetaPhoto:
         self._read_dir()
         self._read_meta()
         for picture in self.meta_pictures:
-            self._copy_picture(picture)
+            try:
+                self._copy_picture(picture)
+            except Exception as e:
+                print(f"Could not copy file {picture.picture_path} because of {e}")
 
 
 class MetaPicture:
