@@ -25,3 +25,7 @@ def main():
 
     meta = MetaPhoto(source_directory=source_directory, target_directory=target_directory, tag=tag)
     meta.copy()
+
+
+if __name__ == "__main__":
+    main()
