@@ -2,7 +2,7 @@ from datetime import datetime
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
-from shutil import move
+from shutil import copy2
 
 from exif import Image
 
@@ -65,10 +65,10 @@ class MetaPhoto:
         target_path = join(self.target_directory, new_folder_name, new_file_name)
         return target_path
 
-    def _move_picture(self, picture: 'MetaPicture'):
+    def _copy_picture(self, picture: 'MetaPicture'):
         """ Move a given MetaPicture to a new directory. Rename it based on it's date and tag """
         target_path = self._build_target_path(picture)
-        move(picture.picture_path, target_path)
+        copy2(picture.picture_path, target_path)
 
 
 class MetaPicture:
