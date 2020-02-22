@@ -68,6 +68,7 @@ class MetaPhoto:
     def _copy_picture(self, picture: 'MetaPicture'):
         """ Move a given MetaPicture to a new directory. Rename it based on it's date and tag """
         target_path = self._build_target_path(picture)
+        print(f"Copy file {picture.picture_path} to {target_path}")
         copy2(picture.picture_path, target_path)
 
     def copy(self):
