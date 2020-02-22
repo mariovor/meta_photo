@@ -23,6 +23,10 @@ def main():
         else:
             assert False, "unhandled option"
 
+    if source_directory is None or target_directory is None or tag is None:
+        print("Please state a source directory, target directory, and a tag")
+        sys.exit(2)
+
     meta = MetaPhoto(source_directory=source_directory, target_directory=target_directory, tag=tag)
     meta.copy()
 
