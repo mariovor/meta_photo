@@ -1,5 +1,5 @@
 # MetaPhoto
-Move pictures to a new folder, use as name the creation date, a tag, and the original name.
+Copy pictures to a new folder, use as name the creation date, a tag, and the original name.
 
 ## Required modules
 * exif
