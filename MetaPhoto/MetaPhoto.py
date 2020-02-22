@@ -13,8 +13,10 @@ class MetaPhoto:
     Name the files based on date, a tag, and the original name.
     """
 
-    def __init__(self, input_folder):
+    def __init__(self, input_folder, tag: str):
         self.input_folder = input_folder
+        self.tag = tag
+
         self.raw_pictures = []
         self.meta_pictures = []
         self.date_format_file_name = "%Y%m%d-%H%M"
@@ -48,13 +50,13 @@ class MetaPhoto:
         file_name = picture.picture_path.name
         formatted_date = self._get_formatted_date_for_file_name(picture)
         # Build new file name
-        new_file_name = f"{formatted_date}_{file_name}"
+        new_file_name = f"{formatted_date}_{self.tag}_{file_name}"
         return new_file_name
 
     def _build_new_folder_name(self, picture):
         date = self._get_date_object(picture.get_date())
 
-        return date.strftime(self.date_format_folder)
+        return f"{date.strftime(self.date_format_folder)}_{self.tag}"
 
     def _build_target_path(self, picture, target_directory):
         new_file_name = self._build_new_file_name(picture)

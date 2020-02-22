@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from MetaPhoto.MetaPhoto import MetaPhoto, MetaPicture
+from MetaPhoto.MetaPhoto import MetaPhoto
 
 
 class TestMetaPhoto(TestCase):
@@ -19,12 +19,13 @@ class TestMetaPhoto(TestCase):
 
     @patch("MetaPhoto.MetaPhoto.move")
     def test_move_picture(self, mock_copy):
-        meta = MetaPhoto("../samples/")
+        meta = MetaPhoto("../samples/", tag= "TAG")
         meta._read_dir()
         meta._read_meta()
         meta._move_picture(meta.meta_pictures[0], "/test/folder/")
         mock_copy.assert_called_once()
-        mock_copy.assert_called_once_with(Path("../samples/astro.jpg"), "/test/folder/2008/20081122-1929_astro.jpg")
+        mock_copy.assert_called_once_with(Path("../samples/astro.jpg"),
+                                          "/test/folder/2008_TAG/20081122-1929_TAG_astro.jpg")
 
     def test_format_data(self):
         meta = MetaPhoto("../samples/")
