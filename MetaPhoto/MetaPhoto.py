@@ -1,5 +1,5 @@
 from datetime import datetime
-from os import listdir
+from os import listdir, makedirs
 from os.path import isfile, join
 from pathlib import Path
 from shutil import copy2
@@ -23,6 +23,8 @@ class MetaPhoto:
         self.date_format_file_name = "%Y%m%d-%H%M"
         self.date_format_folder = "%Y"
         self.exif_date_format = "%Y:%m:%d %H:%M:%S"
+
+        self._target_path = None
 
     def _read_dir(self):
         """ Read all files from the input directory """
@@ -59,17 +61,21 @@ class MetaPhoto:
 
         return f"{date.strftime(self.date_format_folder)}_{self.tag}"
 
-    def _build_target_path(self, picture):
+    def _build_and_create_target_path(self, picture):
         new_file_name = self._build_new_file_name(picture)
-        new_folder_name = self._build_new_folder_name(picture)
-        target_path = join(self.target_directory, new_folder_name, new_file_name)
-        return target_path
+        new_folder_name = join(self.target_directory, self._build_new_folder_name(picture))
+        try:
+            makedirs(new_folder_name)
+            print(f"Folder {new_folder_name} created")
+        except FileExistsError:
+            pass
+        self.target_path = join(new_folder_name, new_file_name)
 
     def _copy_picture(self, picture: 'MetaPicture'):
         """ Move a given MetaPicture to a new directory. Rename it based on it's date and tag """
-        target_path = self._build_target_path(picture)
-        print(f"Copy file {picture.picture_path} to {target_path}")
-        copy2(picture.picture_path, target_path)
+        self._build_and_create_target_path(picture)
+        print(f"Copy file {picture.picture_path} to {self.target_path}")
+        copy2(picture.picture_path, self.target_path)
 
     def copy(self):
         self._read_dir()

@@ -18,19 +18,22 @@ class TestMetaPhoto(TestCase):
         self.assertEqual("2008:11:22 19:29:04", meta.meta_pictures[0].get_date())
 
     @patch("MetaPhoto.MetaPhoto.copy2")
-    def test_copy_picture(self, mock_copy):
+    @patch("MetaPhoto.MetaPhoto.makedirs")
+    def test_copy_single_picture(self, mock_makedirs, mock_copy):
         meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
         meta._read_dir()
         meta._read_meta()
         meta._copy_picture(meta.meta_pictures[0])
-        mock_copy.assert_called_once()
+        mock_makedirs.assert_called_once_with("/test/folder/2008_TAG")
         mock_copy.assert_called_once_with(Path("../samples/astro.jpg"),
                                           "/test/folder/2008_TAG/20081122-1929_TAG_astro.jpg")
 
     @patch("MetaPhoto.MetaPhoto.copy2")
-    def test_copy_picture(self, mock_copy):
+    @patch("MetaPhoto.MetaPhoto.makedirs")
+    def test_copy_picture(self, mock_makedirs, mock_copy):
         meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
         meta.copy()
+        mock_makedirs.assert_called_once_with("/test/folder/2008_TAG")
         mock_copy.assert_called_once()
         mock_copy.assert_called_once_with(Path("../samples/astro.jpg"),
                                           "/test/folder/2008_TAG/20081122-1929_TAG_astro.jpg")
