@@ -13,8 +13,9 @@ class MetaPhoto:
     Name the files based on date, a tag, and the original name.
     """
 
-    def __init__(self, input_folder, tag: str):
-        self.input_folder = input_folder
+    def __init__(self, source_directory: str, target_directory: str, tag: str):
+        self.source_directory = Path(source_directory)
+        self.target_directory = Path(target_directory)
         self.tag = tag
 
         self.raw_pictures = []
@@ -26,8 +27,8 @@ class MetaPhoto:
     def _read_dir(self):
         """ Read all files from the input directory """
         self.raw_pictures = sorted(
-            [join(self.input_folder, file) for file in listdir(self.input_folder) if
-             isfile(join(self.input_folder, file))])
+            [join(self.source_directory, file) for file in listdir(self.source_directory) if
+             isfile(join(self.source_directory, file))])
 
     def _read_meta(self):
         """ Convert the found files to objects handling exif information """
@@ -58,15 +59,15 @@ class MetaPhoto:
 
         return f"{date.strftime(self.date_format_folder)}_{self.tag}"
 
-    def _build_target_path(self, picture, target_directory):
+    def _build_target_path(self, picture):
         new_file_name = self._build_new_file_name(picture)
         new_folder_name = self._build_new_folder_name(picture)
-        target_path = join(target_directory, new_folder_name, new_file_name)
+        target_path = join(self.target_directory, new_folder_name, new_file_name)
         return target_path
 
-    def _move_picture(self, picture: 'MetaPicture', target_directory: Path):
-        """ Move a given MetaPicture to a new directory. Rename it based on it's date """
-        target_path = self._build_target_path(picture, target_directory)
+    def _move_picture(self, picture: 'MetaPicture'):
+        """ Move a given MetaPicture to a new directory. Rename it based on it's date and tag """
+        target_path = self._build_target_path(picture)
         move(picture.picture_path, target_path)
 
 
