@@ -37,10 +37,12 @@ class MetaPhoto:
         self.meta_pictures = [MetaPicture(image) for image in self.raw_pictures]
 
     def _get_date_object(self, date_string):
+        """ Convert the date string into a date object using configured exif date format """
         date = datetime.strptime(date_string, self.exif_date_format)
         return date
 
     def _get_formatted_date_for_file_name(self, picture):
+        """ Return a string containing the creation date using the configured format """
         # Get data and format
         date_string = picture.get_date()
         date = self._get_date_object(date_string)
@@ -50,6 +52,7 @@ class MetaPhoto:
         return date.strftime(self.date_format_file_name)
 
     def _build_new_file_name(self, picture):
+        """ Create a name for the file using date, tag and the original file name """
         file_name = picture.picture_path.name
         formatted_date = self._get_formatted_date_for_file_name(picture)
         # Build new file name
@@ -57,11 +60,13 @@ class MetaPhoto:
         return new_file_name
 
     def _build_new_folder_name(self, picture):
+        """ Create the name for the folder for the new fies. Use date and the tag """
         date = self._get_date_object(picture.get_date())
 
         return f"{date.strftime(self.date_format_folder)}_{self.tag}"
 
     def _build_and_create_target_path(self, picture):
+        """ Create the full target path for the new file. Create folders if necessary """
         new_file_name = self._build_new_file_name(picture)
         new_folder_name = join(self.target_directory, self._build_new_folder_name(picture))
         try:
@@ -78,6 +83,7 @@ class MetaPhoto:
         copy2(picture.picture_path, self.target_path)
 
     def copy(self):
+        """ Read the source directory and copy the files to the target directory """
         self._read_dir()
         self._read_meta()
         for picture in self.meta_pictures:
