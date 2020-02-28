@@ -83,13 +83,30 @@ class MetaPhoto:
 
     def copy(self):
         """ Read the source directory and copy the files to the target directory """
+        failed = False
         self._read_dir()
         self._read_meta()
         for picture in self.meta_pictures:
             try:
                 self._copy_picture(picture)
             except Exception as e:
+                failed = True
                 print(f"Could not copy file {picture.picture_path} because of {e}")
+            if failed:
+                self._copy_failed_picture(picture)
+
+    def _copy_failed_picture(self, picture):
+        new_folder_name = self._build_and_create_failed_target_path()
+        copy2(picture.picture_path, join(new_folder_name, picture.picture_path.name))
+
+    def _build_and_create_failed_target_path(self):
+        new_folder_name = join(self.target_directory, "failed_" + self.tag)
+        try:
+            makedirs(new_folder_name)
+            print(f"Folder {new_folder_name} created")
+        except FileExistsError:
+            pass
+        return new_folder_name
 
 
 class MetaPicture:

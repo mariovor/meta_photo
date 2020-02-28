@@ -7,12 +7,12 @@ from MetaPhoto.MetaPhoto import MetaPhoto
 
 class TestMetaPhoto(TestCase):
     def test_read_dir(self):
-        meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
+        meta = MetaPhoto(source_directory="../samples/good/", target_directory="/test/folder/", tag="TAG")
         meta._read_dir()
-        self.assertListEqual(sorted(["../samples/astro.jpg"]), meta.raw_pictures)
+        self.assertListEqual(sorted(["../samples/good/astro.jpg"]), meta.raw_pictures)
 
     def test_read_meta(self):
-        meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
+        meta = MetaPhoto(source_directory="../samples/good/", target_directory="/test/folder/", tag="TAG")
         meta._read_dir()
         meta._read_meta()
         self.assertEqual("2008:11:22 19:29:04", meta.meta_pictures[0].get_date())
@@ -20,26 +20,36 @@ class TestMetaPhoto(TestCase):
     @patch("MetaPhoto.MetaPhoto.copy2")
     @patch("MetaPhoto.MetaPhoto.makedirs")
     def test_copy_single_picture(self, mock_makedirs, mock_copy):
-        meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
+        meta = MetaPhoto(source_directory="../samples/good/", target_directory="/test/folder/", tag="TAG")
         meta._read_dir()
         meta._read_meta()
         meta._copy_picture(meta.meta_pictures[0])
         mock_makedirs.assert_called_once_with("/test/folder/2008_TAG")
-        mock_copy.assert_called_once_with(Path("../samples/astro.jpg"),
+        mock_copy.assert_called_once_with(Path("../samples/good/astro.jpg"),
                                           "/test/folder/2008_TAG/20081122-1929_TAG_astro.jpg")
 
     @patch("MetaPhoto.MetaPhoto.copy2")
     @patch("MetaPhoto.MetaPhoto.makedirs")
     def test_copy_picture(self, mock_makedirs, mock_copy):
-        meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
+        meta = MetaPhoto(source_directory="../samples/good/", target_directory="/test/folder/", tag="TAG")
         meta.copy()
         mock_makedirs.assert_called_once_with("/test/folder/2008_TAG")
         mock_copy.assert_called_once()
-        mock_copy.assert_called_once_with(Path("../samples/astro.jpg"),
+        mock_copy.assert_called_once_with(Path("../samples/good/astro.jpg"),
                                           "/test/folder/2008_TAG/20081122-1929_TAG_astro.jpg")
 
+    @patch("MetaPhoto.MetaPhoto.copy2")
+    @patch("MetaPhoto.MetaPhoto.makedirs")
+    def test_copy_picture_error(self, mock_makedirs, mock_copy):
+        meta = MetaPhoto(source_directory="../samples/broken", target_directory="/test/folder/", tag="TAG")
+        meta.copy()
+        mock_makedirs.assert_called_once_with("/test/folder/failed_TAG")
+        mock_copy.assert_called_once()
+        mock_copy.assert_called_once_with(Path("../samples/broken/broken.jpg"),
+                                          "/test/folder/failed_TAG/broken.jpg")
+
     def test_format_data(self):
-        meta = MetaPhoto(source_directory="../samples/", target_directory="/test/folder/", tag="TAG")
+        meta = MetaPhoto(source_directory="../samples/good/", target_directory="/test/folder/", tag="TAG")
         meta.date_format_file_name = "%Y%m%d-%H%M"
         original_date_as_str = "2008:11:22 19:29:04"
         mock_pic = MagicMock()
