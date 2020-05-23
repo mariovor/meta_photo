@@ -34,7 +34,12 @@ class MetaPhoto:
 
     def _read_meta(self):
         """ Convert the found files to objects handling exif information """
-        self.meta_pictures = [MetaPicture(image) for image in self.raw_pictures]
+        self.meta_pictures = []
+        for image in self.raw_pictures:
+            try:
+                self.meta_pictures.append(MetaPicture(image))
+            except CannotReadImageException:
+                print("Skipping file " + image)
 
     def _get_date_object(self, date_string):
         """ Convert the date string into a date object using configured exif date format """
@@ -118,8 +123,11 @@ class MetaPicture:
         self._read()
 
     def _read(self):
-        with open(self.picture_path, 'rb') as file:
-            self.image = Image(file)
+        try:
+            with open(self.picture_path, 'rb') as file:
+                self.image = Image(file)
+        except AssertionError as e:
+            raise CannotReadImageException from e
 
     def get_date(self):
         if hasattr(self.image, "datetime_original"):
@@ -127,3 +135,7 @@ class MetaPicture:
         else:
             date = ""
         return date
+
+
+class CannotReadImageException(Exception):
+    pass
