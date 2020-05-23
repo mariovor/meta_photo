@@ -1,4 +1,5 @@
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication, QFileDialog
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication, QFileDialog, \
+    QTextEdit, QLineEdit
 
 
 class SelectorRowWidget(QWidget):
@@ -31,6 +32,20 @@ class SelectorRowWidget(QWidget):
             self.selected_folder_text.setText(folder_name)
 
 
+class TagWidget(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.main_layout = QVBoxLayout()
+        self.setLayout(self.main_layout)
+
+        self.label = QLabel("Choose a tag")
+        self.main_layout.addWidget(self.label)
+
+        self.tag_text = QLineEdit()
+        self.main_layout.addWidget(self.tag_text)
+
+
 class MoveWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -43,6 +58,9 @@ class MoveWidget(QWidget):
 
         target_row = SelectorRowWidget(label="Select the target folder")
         self.main_layout.addWidget(target_row)
+
+        tag_widget = TagWidget()
+        self.main_layout.addWidget(tag_widget)
 
         self.execute_button = QPushButton(text="Move")
         self.main_layout.addWidget(self.execute_button)
