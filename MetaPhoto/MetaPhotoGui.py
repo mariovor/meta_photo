@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication, QFileDialog
 
 
 class SelectorRowWidget(QWidget):
@@ -20,6 +20,15 @@ class SelectorRowWidget(QWidget):
         self.picker_layout.addWidget(self.selected_folder_text)
 
         self.picker_layout.addStretch()
+
+        # Make connects
+        self.select_button.clicked.connect(self.select_folder)
+
+    def select_folder(self):
+        folder_name = QFileDialog.getExistingDirectory(self,
+                                                       "Select folder")
+        if folder_name:
+            self.selected_folder_text.setText(folder_name)
 
 
 class MoveWidget(QWidget):
