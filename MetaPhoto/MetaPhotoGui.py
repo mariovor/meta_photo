@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication, QFileDialog, \
-    QTextEdit, QLineEdit
+    QLineEdit, QDesktopWidget
 
 
 class SelectorRowWidget(QWidget):
@@ -49,6 +49,7 @@ class TagWidget(QWidget):
 class MoveWidget(QWidget):
     def __init__(self):
         super().__init__()
+        self.center()
         self.setWindowTitle("MetaPhoto: Move files!")
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
@@ -64,6 +65,14 @@ class MoveWidget(QWidget):
 
         self.execute_button = QPushButton(text="Move")
         self.main_layout.addWidget(self.execute_button)
+
+    def center(self):
+        center_position = QDesktopWidget().availableGeometry().center()
+        # Get geometry and move it
+        geometry = self.frameGeometry()
+        geometry.moveCenter(center_position)
+        # Move widget
+        self.move(geometry.topLeft())
 
 
 def init_gui():
