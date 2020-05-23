@@ -1,3 +1,6 @@
+from os.path import isdir
+from pathlib import Path
+
 from PySide2.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QApplication, QFileDialog, \
     QLineEdit, QDesktopWidget
 
@@ -28,8 +31,15 @@ class SelectorRowWidget(QWidget):
         self.select_button.clicked.connect(self.select_folder)
 
     def select_folder(self):
+        # If we already have a valid folder selected, use it
+        if isdir(self.selected_folder_text.text()):
+            working_dir = self.selected_folder_text.text()
+        else:
+            # If not, use the home folder
+            working_dir = str(Path.home())
         folder_name = QFileDialog.getExistingDirectory(self,
-                                                       "Select folder")
+                                                       "Select folder",
+                                                       working_dir)
         if folder_name:
             self.selected_folder_text.setText(folder_name)
 
