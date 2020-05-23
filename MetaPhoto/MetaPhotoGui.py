@@ -44,6 +44,9 @@ class MoveWidget(QWidget):
         target_row = SelectorRowWidget(label="Select the target folder")
         self.main_layout.addWidget(target_row)
 
+        self.execute_button = QPushButton(text="Move")
+        self.main_layout.addWidget(self.execute_button)
+
 
 def init_gui():
     app = QApplication()
