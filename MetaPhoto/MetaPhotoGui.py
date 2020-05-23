@@ -58,11 +58,11 @@ class TagWidget(QWidget):
         self.main_layout.addWidget(self.tag_text)
 
 
-class MoveWidget(QWidget):
+class CopyWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.center()
-        self.setWindowTitle("MetaPhoto: Move files!")
+        self.setWindowTitle("MetaPhoto: Copy files!")
         self.main_layout = QVBoxLayout()
         self.setLayout(self.main_layout)
 
@@ -75,11 +75,11 @@ class MoveWidget(QWidget):
         self.tag_widget = TagWidget()
         self.main_layout.addWidget(self.tag_widget)
 
-        self.execute_button = QPushButton(text="Move")
+        self.execute_button = QPushButton(text="Copy")
         self.main_layout.addWidget(self.execute_button)
 
         # Connects
-        self.execute_button.clicked.connect(self.run_move)
+        self.execute_button.clicked.connect(self.run_copy)
 
     def center(self):
         center_position = QDesktopWidget().availableGeometry().center()
@@ -89,7 +89,7 @@ class MoveWidget(QWidget):
         # Move widget
         self.move(geometry.topLeft())
 
-    def run_move(self):
+    def run_copy(self):
         meta = MetaPhoto(source_directory=self.source_row.selected_folder_text.text(),
                          target_directory=self.target_row.selected_folder_text.text(),
                          tag=self.tag_widget.tag_text.text())
@@ -98,7 +98,7 @@ class MoveWidget(QWidget):
 
 def init_gui():
     app = QApplication()
-    move_widget = MoveWidget()
+    move_widget = CopyWidget()
     move_widget.show()
 
     app.exec_()
