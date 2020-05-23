@@ -88,16 +88,13 @@ class MetaPhoto:
 
     def copy(self):
         """ Read the source directory and copy the files to the target directory """
-        failed = False
         self._read_dir()
         self._read_meta()
         for picture in self.meta_pictures:
             try:
                 self._copy_picture(picture)
             except Exception as e:
-                failed = True
                 print(f"Could not copy file {picture.picture_path} because of {e}")
-            if failed:
                 self._copy_failed_picture(picture)
 
     def _copy_failed_picture(self, picture):
